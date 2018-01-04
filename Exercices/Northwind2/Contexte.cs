@@ -45,12 +45,7 @@ namespace Northwind2
             return ListePaysFournisseur;
         }
 
-        //public static void GérerErreursql(object sqlException, object e)
-        //{
-
-        //}
-
-        internal static void SuppresionProduit(int IdProd)
+        public static void SuppresionProduit(int IdProd)
         {
             var cmd = new SqlCommand();
             cmd.CommandText = @"delete from Product  where ProductId = @idprod ";
@@ -159,7 +154,7 @@ namespace Northwind2
             return listCategorie;
         }
 
-        public static List<Produit> GetProduits(string categorieID)
+        public static List<Produit> GetProduits(Guid categorieID)
         {
             var listProduit = new List<Produit>();
 
@@ -172,8 +167,8 @@ namespace Northwind2
                                     ";
             cmd.Parameters.Add(new SqlParameter
             {
-                SqlDbType = SqlDbType.NVarChar,
-                ParameterName = "@catId ",
+                SqlDbType = SqlDbType.UniqueIdentifier,
+                ParameterName = "@catId",
                 Value = categorieID
             });
 
@@ -197,7 +192,7 @@ namespace Northwind2
             return listProduit;
         }
 
-       public static Produits GetProduit( int id)
+        public static Produits GetProduit(int id)
         {
             var com = new SqlCommand();
             var prod = new Produits();
@@ -217,7 +212,7 @@ namespace Northwind2
                 {
                     while (sdr.Read())
                     {
-                        
+
                         prod.Nom = (string)sdr["Name"];
                         prod.Idcategorie = (Guid)sdr["CategoryId"];
                         prod.Idfournisseur = (int)sdr["SupplierId"];
@@ -233,7 +228,7 @@ namespace Northwind2
         public static void AjouterModifierProduit(Produits produit, typeOperation operation)
         {
             var cmd = new SqlCommand();
-           
+
             if (operation == typeOperation.Ajout)
             {
 
@@ -302,7 +297,7 @@ namespace Northwind2
                     ParameterName = "@IdFour",
                     Value = produit.Idfournisseur
                 });
-                
+
                 cmd.Parameters.Add(new SqlParameter
                 {
                     SqlDbType = SqlDbType.Money,
@@ -316,7 +311,7 @@ namespace Northwind2
                     Value = produit.UnitsInStock
                 });
             }
-            
+
             using (var cnx = new SqlConnection(Settings.Default.Northwind2Connect))
             {
                 cmd.Connection = cnx;
