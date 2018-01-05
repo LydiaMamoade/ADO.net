@@ -26,7 +26,7 @@ namespace Exercies
 
             // Affichage de la page d'accueil
             app.NavigateTo(accueil);
-            app.Run();
+           
        }
 
     }

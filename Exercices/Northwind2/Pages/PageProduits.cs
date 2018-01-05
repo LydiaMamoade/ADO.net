@@ -23,21 +23,21 @@ namespace Northwind2.Pages
         {
             var idcat = AfficheProduits();
 
-            Produit produit = new Produit();
+            Product produit = new Product();
             var saisieIDProd = Input.Read<int>("Entrer l'Id du produit à modifier ");
-            produit.IdProduit = saisieIDProd;
+            produit.ProductId = saisieIDProd;
             try
             {
-                Contexte.SuppresionProduit(saisieIDProd);
+                Northwind2App.DataContext.SuppresionProduit(saisieIDProd);
                 Output.WriteLine(ConsoleColor.Magenta, "Produit supprimer avec succès");
             }
             catch (SqlException e)
             {
-                GérerErreursql( e);
+                GérerErreursql(e);
             }
         }
 
-        private void GérerErreursql( SqlException ex)
+        private void GérerErreursql(SqlException ex)
         {
             if (ex.Number == 547) Output.WriteLine(ConsoleColor.Red, "Le produit ne peut pas être supprimé car il est référencé par une commande");
             else throw ex;
@@ -49,20 +49,20 @@ namespace Northwind2.Pages
             var idcat = AfficheProduits();
 
 
-            Produits modifProduit = new Produits();
+            Product modifProduit = new Product();
 
             var saisieIDProd = Input.Read<int>("Entrer l'Id du produit à modifier ");
-            modifProduit.IdProduit = saisieIDProd;
-            var produit = Contexte.GetProduit(saisieIDProd);
+            modifProduit.ProductId = saisieIDProd;
+            var produit = Northwind2App.DataContext.GetProduit(saisieIDProd);
 
-            var saisieNom = Input.Read<string>("Entrer le nom du produit ", produit.Nom);
-            modifProduit.Nom = saisieNom;
+            var saisieNom = Input.Read<string>("Entrer le nom du produit ", produit.Name);
+            modifProduit.Name = saisieNom;
 
-            var saisieIdcat = Input.Read<Guid>("Entrer l'Id de catégorie ", produit.Idcategorie);
-            modifProduit.Idcategorie = saisieIdcat;
+            var saisieIdcat = Input.Read<Guid>("Entrer l'Id de catégorie ", produit.CategoryId);
+            modifProduit.CategoryId = saisieIdcat;
 
-            var saisieIdFour = Input.Read<int>("Entrer l'Id du fournisseur ", produit.Idfournisseur);
-            modifProduit.Idfournisseur = saisieIdFour;
+            var saisieIdFour = Input.Read<int>("Entrer l'Id du fournisseur ", produit.SupplierId);
+            modifProduit.SupplierId = saisieIdFour;
 
             var saisieUprix = Input.Read<decimal>("Entrer le prix unitaire ", produit.UnitPrice);
             modifProduit.UnitPrice = saisieUprix;
@@ -70,7 +70,7 @@ namespace Northwind2.Pages
             var saisieUstock = Input.Read<Int16>("Entrer l'unité en stock ", produit.UnitsInStock);
             modifProduit.UnitsInStock = saisieUstock;
 
-            Contexte.AjouterModifierProduit(modifProduit, typeOperation.Modification);
+            Northwind2App.DataContext.AjouterModifierProduit(modifProduit, typeOperation.Modification);
             Output.WriteLine(ConsoleColor.Magenta, "Produit modifié avec succès");
 
         }
@@ -78,19 +78,19 @@ namespace Northwind2.Pages
         private void CreerProduit()
         {
 
-            List<Categorie> ListeCat = new List<Categorie>();
-            ListeCat = Contexte.GetCategories();
+            IList<Categorie> ListeCat = new List<Categorie>();
+            ListeCat = Northwind2App.DataContext.GetCategories();
             ConsoleTable.From(ListeCat, "Catégorie").Display("Liste de categorie");
 
-            Produits nouveauProduit = new Produits();
+            Product nouveauProduit = new Product();
             var saisieIdcat = Input.Read<Guid>("Entrer l'Id de catégorie ");
-            nouveauProduit.Idcategorie = saisieIdcat;
+            nouveauProduit.CategoryId = saisieIdcat;
 
             var saisieIdFour = Input.Read<int>("Entrer l'Id du fournisseur ");
-            nouveauProduit.Idfournisseur = saisieIdFour;
+            nouveauProduit.SupplierId = saisieIdFour;
 
             var saisieNom = Input.Read<string>("Entrer le nom du produit ");
-            nouveauProduit.Nom = saisieNom;
+            nouveauProduit.Name = saisieNom;
 
             var saisieUprix = Input.Read<decimal>("Entrer le prix unitaire ");
             nouveauProduit.UnitPrice = saisieUprix;
@@ -98,7 +98,7 @@ namespace Northwind2.Pages
             var saisieUstock = Input.Read<Int16>("Entrer l'unité en stock ");
             nouveauProduit.UnitsInStock = saisieUstock;
 
-            Contexte.AjouterModifierProduit(nouveauProduit, typeOperation.Ajout);
+            Northwind2App.DataContext.AjouterModifierProduit(nouveauProduit, typeOperation.Ajout);
             Output.WriteLine(ConsoleColor.Magenta, "Produit crée avec succès ");
 
         }
@@ -106,13 +106,13 @@ namespace Northwind2.Pages
         private Guid AfficheProduits()
         {
 
-            List<Categorie> ListeCat = new List<Categorie>();
-            ListeCat = Contexte.GetCategories();
+            //List<Categorie> ListeCat = new List<Categorie>();
+            var ListeCat = Northwind2App.DataContext.GetCategories();
             ConsoleTable.From(ListeCat, "Catégorie").Display("Liste de categorie");
 
             var saisieIdcat = Input.Read<Guid>("Entrer l'Id de catégorie ");
-            List<Produit> ListeProduit = new List<Produit>();
-            ListeProduit = Contexte.GetProduits(saisieIdcat);
+            IList<Product> ListeProduit = new List<Product>();
+            ListeProduit = Northwind2App.DataContext.GetProduits(saisieIdcat);
             ConsoleTable.From(ListeProduit, "Produits").Display("Liste de produits");
             return saisieIdcat;
         }

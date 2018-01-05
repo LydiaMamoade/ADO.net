@@ -15,7 +15,7 @@ namespace Northwind2.Tests
         [TestMethod()]
         public void TestGetPaysFournisseurs()
         {
-            var list = Contexte.GetPaysFournisseurs();
+            var list = Northwind2App.DataContext.GetPaysFournisseurs();
             Assert.AreEqual(16, list.Count);
             Assert.AreEqual("USA", list[list.Count - 1]);
         }
@@ -24,11 +24,11 @@ namespace Northwind2.Tests
         [TestMethod()]
         public void TestGetFournisseurs()
         {
-            var list = Contexte.GetFournisseurs();
+            var list = Northwind2App.DataContext.GetFournisseurs("Japan");
 
             for (int i = 0; i < list.Count; i++)
             {
-                if (list[i].Nom == "Japan")   Assert.IsTrue(list[i].Id == 6 | list[i].Id== 4 );
+                if (list[i].CompanyName == "Japan")   Assert.IsTrue(list[i].SupplierId == 6 | list[i].SupplierId== 4 );
               
             }
 
@@ -38,7 +38,7 @@ namespace Northwind2.Tests
         [TestMethod()]
         public void TestGetNbProduits()
         {
-            Assert.AreEqual(5, Contexte.GetNbProduits("UK"));
+            Assert.AreEqual(5, Northwind2App.DataContext.GetNbProduits("UK"));
         }
 
         
@@ -46,7 +46,7 @@ namespace Northwind2.Tests
         [TestMethod()]
         public void TestGetCategories()
         {
-            var list = Contexte.GetCategories();
+            var list = Northwind2App.DataContext.GetCategories();
             Assert.AreEqual(8, list.Count);
             Assert.AreEqual("Seafood", list[list.Count - 1].Nom);
         }
@@ -56,15 +56,15 @@ namespace Northwind2.Tests
         [TestMethod()]
         public void TestGetProduits()
         {
-            var listC = Contexte.GetCategories();
+            var listC = Northwind2App.DataContext.GetCategories();
 
             for (int i = 0; i < listC.Count; i++)
             {
                 if (listC[i].Nom == "Seafood")
                 {
-                    var listF = Contexte.GetProduits(listC[i].Id);
+                    var listF = Northwind2App.DataContext.GetProduits(listC[i].Id);
                     Assert.AreEqual(12, listF.Count);
-                    Assert.AreEqual(40, listF[6].IdProduit);
+                    Assert.AreEqual(40, listF[6].ProductId);
                 }
 
             }
@@ -81,21 +81,21 @@ namespace Northwind2.Tests
         [TestMethod()]
         public void TestAjouterModifierProduit()
         {
-            Produits p = new Produits();
-            var listC = Contexte.GetCategories();
+            Product p = new Product();
+            var listC = Northwind2App.DataContext.GetCategories();
             for (int i = 0; i < listC.Count; i++)
             {
                 if (listC[i].Description == "Cheeses")
                 {
-                    p.Idcategorie = listC[i].Id;
-                    p.Idfournisseur = 5;
-                    p.Nom = "Nouveau Produit";
+                    p.CategoryId = listC[i].Id;
+                    p.SupplierId = 5;
+                    p.Name = "Nouveau Produit";
                     p.UnitPrice = 5.5m;
                     p.UnitsInStock = 5;
 
-                    Contexte.AjouterModifierProduit(p, typeOperation.Ajout);
+                    Northwind2App.DataContext.AjouterModifierProduit(p, typeOperation.Ajout);
 
-                    var listF = Contexte.GetProduits(listC[i].Id);
+                    var listF = Northwind2App.DataContext.GetProduits(listC[i].Id);
                     Assert.AreEqual(11, listF.Count);
                 }
             }
@@ -105,17 +105,17 @@ namespace Northwind2.Tests
         [TestMethod()]
        public void TestSuppresionProduit()
         {
-            Produits p = new Produits();
-            var listC = Contexte.GetCategories();
+            Product p = new Product();
+            var listC = Northwind2App.DataContext.GetCategories();
             for (int i = 0; i < listC.Count; i++)
             {
                 if (listC[i].Description == "Cheeses")
                 {
-                    var listF = Contexte.GetProduits(listC[i].Id);
+                    var listF = Northwind2App.DataContext.GetProduits(listC[i].Id);
                     for (int iter = 0; iter < listF.Count; iter++)
                         if (listF[i].UnitPrice == 5.5m && listF[i].UnitsInStock == 5)
                         {
-                            Contexte.SuppresionProduit(listF[i].IdProduit);
+                            Northwind2App.DataContext.SuppresionProduit(listF[i].ProductId);
                             Assert.AreEqual(10, listF.Count);
                         }
                 }
